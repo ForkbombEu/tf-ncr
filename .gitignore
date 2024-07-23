@@ -1,0 +1,6 @@
+./openTofuCode/.terraform/
+./testRsaKey
+./testRsaKey.pub
+./openTofuCode/terraform.tfstate
+./openTofuCode/terraform.tfstate.backup
+./openTofuCode/.terraform.lock.hcl
