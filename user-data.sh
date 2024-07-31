@@ -12,7 +12,12 @@ mkdir -p ~/.local/bin
 wget https://github.com/forkbombeu/ncr/releases/latest/download/ncr -O ~/.local/bin/ncr && chmod +x ~/.local/bin/ncr
 # Add ~/.local/bin to PATH
 export PATH=$PATH:~/.local/bin
-# Clone the repository
+
+# Clone NCR repo
 git clone https://github.com/forkbombeu/ncr
+
+# Clone the pqcrypto scripts
+git clone https://github.com/ForkbombEu/tf-pqcrypto-scripts
+
 # Run the server with the example folder
-ncr -p 8080 -z ./ncr/tests/fixtures --public-directory ./ncr/public &
+ncr -p 8080 -z ./tf-pqcrypto-scripts/contracts &
