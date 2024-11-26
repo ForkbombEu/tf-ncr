@@ -39,16 +39,17 @@ The command writes the files:  _~/.aws/credentials_  and  _~/.aws/config_
 
 ## Getting Started
 
-1. **Clone the repository**
+1. **Clone this repository**
 
    ```sh
-   git clone https://github.com/ForkbombEu/tf-ncr.git
+   git clone https://github.com/g7240/tf-ncr.git
    cd tf-ncr
    
 2. **Create ssh key to connect to the ec2 instance**
    ```sh
-   ssh-keygen -t rsa -b 2048 -C "noOwnerName" -f ./testRsaKey
-   chmod 700 ./testRsaKey
+   ssh-keygen -t ed25519 -C "myEDDSAkeyForAWS" -f ./myED25519Key
+   chmod 700 ./myED25519Key
+
 
 3. **Deploy infrastructure on aws**
    ```sh
@@ -59,21 +60,21 @@ The command writes the files:  _~/.aws/credentials_  and  _~/.aws/config_
    Notice: you can configure ami, bucket_name, public_key_path and user_data path modifying terraform.tfvars file. Otherwise default setting will be applied
    
 ## Functionalities
-Ater some minutes, once infrustructure is fully deployed, you can:
+Ater some minutes, once infrustructure is fully deployed, the previous script **should return the IP and URL** of the AWS ec2 instance you just created, then you can:
 
 1. **Connect via ssh as admin**
    
-   Navigate to the folder tf-ncr/ and use ssh
+   Navigate to the folder tf-ncr/ and use ssh (note: *assignedIP* can be the IP or the URL of the AWS ec2 instance produced by OpenTofu)
     ```sh
     cd ..
-    ssh -i ./testRsaKey admin@assignedIP
+    ssh -i ./myED25519Key admin@assignedIP
     ```
 
 2. **Visualize the ncr service documentation web page via http**
 
-   Write in your browser the url http://assignedIP:8080/docs or http://domainNaim:8080/
+   Write in your browser the url http://assignedIP:8080/docs or http://domainName:8080/docs
 
-Note: you can find the assignedIP or the domainNaim to witch the IP is associated in your aws ec2 instances page or in output variables after "terraform apply" comand
+Note: you can find the assignedIP or the domainName to witch the IP is associated in your AWS ec2 instances page or in output variables after "terraform apply" comand
 
 ## How to stop deployment
    ```sh
