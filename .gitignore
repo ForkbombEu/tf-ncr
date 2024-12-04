@@ -1,6 +1,6 @@
 ./openTofuCode/.terraform/
-./testRsaKey
-./testRsaKey.pub
+./myED25519Key
+./myED25519Key.pub
 ./openTofuCode/terraform.tfstate
 ./openTofuCode/terraform.tfstate.backup
 ./openTofuCode/.terraform.lock.hcl
