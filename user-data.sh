@@ -1,7 +1,21 @@
 #!/bin/bash
-#debug to leave a proof to be check via ssh to see if code was executed
-echo "log: user-data.sh was executed
-" >> thisFileCanBeRemoved_user-data.sh_executions.log
+#enable ncr as a program at startup 
+echo "[Unit]
+Description=Run NCR program at startup
+After=network.target
+
+[Service]
+ExecStart=/root/.local/bin/ncr -p 8080 -z /tf-pqcrypto-scripts/contracts
+Restart=always
+User=root
+WorkingDirectory=/root
+Environment=PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+
+[Install]
+WantedBy=multi-user.target" >> /etc/systemd/system/ncr.service
+sudo systemctl daemon-reload
+sudo systemctl enable ncr.service
+
 # Update the package repository
 apt-get update -y
 # Install required packages
