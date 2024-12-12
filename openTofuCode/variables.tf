@@ -21,6 +21,11 @@ variable "bucket_name"{
     default = "example-bucket-fjjdxq3o90p" # this could be randomized
 }
 
+variable "create_key_pair" {
+  default = true
+  description = "Set to true to associate the key pair for SSH access; false to skip."
+}
+
 variable "public_key_path" {
   description = "Path to the public key file"
   type        = string

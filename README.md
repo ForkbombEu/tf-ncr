@@ -55,7 +55,7 @@ The command writes the files:  _~/.aws/credentials_  and  _~/.aws/config_
    ```sh
    cd openTofuCode/
    tofu init
-   tofu apply
+   tofu apply # use 'tofu apply -var="create_key_pair=false"' to not add ssh key
    ```
    Notice: you can configure ami, bucket_name, public_key_path and user_data path modifying terraform.tfvars file. Otherwise default setting will be applied
    

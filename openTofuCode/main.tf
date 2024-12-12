@@ -111,18 +111,20 @@ resource "aws_security_group" "ncr_sg" {
   }
 }
 
-# Define the key pair
+# Define the key pair. It can be null or the key pair created for ssh access based on var.create_key_pair value
 resource "aws_key_pair" "deployer" {
+  count      = var.create_key_pair ? 1 : 0
   key_name   = "deployer"
   public_key = file(var.public_key_path)
 }
+
 
 # Create an EC2 instance to run the NCR service
 resource "aws_instance" "ncr_instance" {
   ami           = var.ami
   instance_type = var.instance_type
   security_groups = [aws_security_group.ncr_sg.name]
-  key_name      = aws_key_pair.deployer.key_name
+  key_name      = var.create_key_pair ? aws_key_pair.deployer[0].key_name : null
   iam_instance_profile  = aws_iam_instance_profile.ncr_instance_profile.name
 
   user_data = <<-EOF
