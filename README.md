@@ -42,22 +42,40 @@ The command writes the files:  _~/.aws/credentials_  and  _~/.aws/config_
 1. **Clone this repository**
 
    ```sh
-   git clone https://github.com/g7240/tf-ncr.git
+   git clone https://github.com/ForkbombEu/tf-ncr.git
    cd tf-ncr
-   
-2. **Create ssh key to connect to the ec2 instance**
+   ```
+
+
+1. **Intro and setup (optional)**
+
+   - You can configure ami, bucket_name, public_key_path and user_data path modifying the *terraform.tfvars* file, otherwise default setting will be applied.
+   - The port 52760 is used in [pipe-tf-ncr](https://github.com/ForkbombEu/pipe-tf-ncr/) (ancillary to [DIDroom_microservices](https://github.com/ForkbombEu/DIDroom_microservices) and can otherwise be closed in *main.tf*
+
+
+
+1. **Create ssh key to connect to the ec2 instance**
    ```sh
    ssh-keygen -t ed25519 -C "myEDDSAkeyForAWS" -f ./myED25519Key
    chmod 700 ./myED25519Key
+   ```
 
-
-3. **Deploy infrastructure on aws**
+1. **Deploy onto AWS EC2**
    ```sh
    cd openTofuCode/
    tofu init
    tofu apply # use 'tofu apply -var="create_key_pair=false"' to not add ssh key
    ```
-   Notice: you can configure ami, bucket_name, public_key_path and user_data path modifying terraform.tfvars file. Otherwise default setting will be applied
+   
+
+1. **Deploy onto AWS EC2 excluding SSH pubkey (EC2 -> AMI)**
+   Use this commands if you want to create an AMI, to be used by 3rd parties, from the EC2: the EC2 instance must be created without embedding a pubkey for SSH access. The SSH network won't be affected.
+    
+   ```sh
+   cd openTofuCode/
+   tofu apply -var="create_key_pair=false" 
+   ```
+   Notice: when using this line, a pubkey to login via SSH must be configured using the AWS dashboard. 
    
 ## Functionalities
 Ater some minutes, once infrustructure is fully deployed, the previous script **should return the IP and URL** of the AWS ec2 instance you just created, then you can:
@@ -70,7 +88,7 @@ Ater some minutes, once infrustructure is fully deployed, the previous script **
     ssh -i ./myED25519Key admin@assignedIP
     ```
 
-2. **Visualize the ncr service documentation web page via http**
+1. **Visualize the ncr service documentation web page via http**
 
    Write in your browser the url http://assignedIP:8080/docs or http://domainName:8080/docs
 
