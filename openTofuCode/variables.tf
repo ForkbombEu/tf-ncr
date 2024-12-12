@@ -18,7 +18,7 @@ variable "region" {
 
 variable "bucket_name"{
     type = string
-    default = "example-bucket-fjjdxq3o90p" # this could be randomized
+    default = "example-bucket-fjjdxq3o90p" # debug: this should be generated randomly every 'tofu apply'
 }
 
 variable "create_key_pair" {

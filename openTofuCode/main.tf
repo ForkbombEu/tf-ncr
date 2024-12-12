@@ -2,7 +2,7 @@ provider "aws" {
   region = var.region
 }
 
-# Ottieni l'ID dell'account corrente
+# Get the current account ID
 data "aws_caller_identity" "current" {}
 
 # Create a private S3 bucket
@@ -44,20 +44,20 @@ resource "aws_iam_role" "ncr_ec2_role" {
   })
 }
 
-# Attacca la policy S3 al ruolo IAM
+# Attach S3 policy to IAM role
 resource "aws_iam_role_policy" "s3_access_policy" {
   name   = "s3_access_policy"
   role   = aws_iam_role.ncr_ec2_role.id
   policy = data.aws_iam_policy_document.s3_policy.json
 }
 
-# Crea un profilo di istanza IAM
+# Create an IAM instance profile
 resource "aws_iam_instance_profile" "ncr_instance_profile" {
   name = "ncr_instance_profile"
   role = aws_iam_role.ncr_ec2_role.name
 }
 
-# Crea una policy del bucket S3 per permettere l'accesso solo al ruolo IAM specifico
+# Create an S3 bucket policy to allow access only to the specific IAM role
 resource "aws_s3_bucket_policy" "example_bucket_policy" {
   bucket = aws_s3_bucket.example_bucket.id
 
@@ -88,7 +88,7 @@ resource "aws_security_group" "ncr_sg" {
     cidr_blocks = ["0.0.0.0/0"]
   }
 
-  ingress {
+  ingress { # debug: this is only necessary for pipe-tf-ncr project. If no more necessary then port 52760 can be removed
     from_port   = 52760
     to_port     = 52760
     protocol    = "tcp"
