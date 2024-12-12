@@ -5,10 +5,9 @@ provider "aws" {
 # Ottieni l'ID dell'account corrente
 data "aws_caller_identity" "current" {}
 
-# Create an S3 bucket
+# Create a private S3 bucket
 resource "aws_s3_bucket" "example_bucket" {
   bucket = var.bucket_name
-  acl    = "private"
 }
 
 # Upload setup script in S3 bucket
