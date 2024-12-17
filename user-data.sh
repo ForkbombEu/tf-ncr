@@ -1,37 +1,54 @@
 #!/bin/bash
-#enable ncr as a program at startup 
+
+# Update the package repository
+apt-get update -y
+# Install upgrades and required packages
+apt-get upgrade -y
+apt-get install -y wget git
+
+# Create directories for persistent configuration and binaries
+INSTALL_DIR="/opt/ncr"
+BIN_DIR="$INSTALL_DIR/bin"
+REPO_DIR="$INSTALL_DIR/repos"
+
+mkdir -p $BIN_DIR $REPO_DIR
+chown -R nobody:nogroup $INSTALL_DIR
+
+# Download the NCR binary as root and make it executable
+wget https://github.com/forkbombeu/ncr/releases/latest/download/ncr -O $BIN_DIR/ncr
+chmod +x $BIN_DIR/ncr
+chown nobody:nogroup $BIN_DIR/ncr
+
+# Clone NCR repo and pqcrypto scripts into the repository directory
+git clone https://github.com/forkbombeu/ncr $REPO_DIR/ncr
+chown -R nobody:nogroup $REPO_DIR/ncr
+git clone https://github.com/ForkbombEu/tf-pqcrypto-scripts $REPO_DIR/tf-pqcrypto-scripts
+chown -R nobody:nogroup $REPO_DIR/tf-pqcrypto-scripts
+
+# Create a systemd service file for NCR
+SERVICE_FILE="/etc/systemd/system/ncr.service"
 echo "[Unit]
 Description=Run NCR program at startup
 After=network.target
 
 [Service]
-ExecStart=/root/.local/bin/ncr -p 8080 -z /tf-pqcrypto-scripts/contracts
+ExecStart=$BIN_DIR/ncr -p 8080 -z $REPO_DIR/tf-pqcrypto-scripts/contracts
 Restart=always
-User=root
-WorkingDirectory=/root
+User=nobody
+WorkingDirectory=$REPO_DIR
 Environment=PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
 
 [Install]
-WantedBy=multi-user.target" >> /etc/systemd/system/ncr.service
-sudo systemctl daemon-reload
-sudo systemctl enable ncr.service
+WantedBy=multi-user.target" > $SERVICE_FILE
 
-# Update the package repository
-apt-get update -y
-# Install required packages
-apt-get install -y wget git
-# Create the directory for local binaries if it doesn't exist
-mkdir -p ~/.local/bin
-# Download the binary
-wget https://github.com/forkbombeu/ncr/releases/latest/download/ncr -O ~/.local/bin/ncr && chmod +x ~/.local/bin/ncr
-# Add ~/.local/bin to PATH
-export PATH=$PATH:~/.local/bin
+# Set proper permissions on the service file
+chmod 644 $SERVICE_FILE
 
-# Clone NCR repo
-git clone https://github.com/forkbombeu/ncr
+# Reload systemd, enable, and start the NCR service
+systemctl daemon-reload
+systemctl enable ncr.service
+systemctl start ncr.service
 
-# Clone the pqcrypto scripts
-git clone https://github.com/ForkbombEu/tf-pqcrypto-scripts
+# Log success message
+echo "NCR has been installed and configured to run as 'nobody' at startup." > /tmp/awsMachine_NCR_ConfigDebug.log
 
-# Run the server with the example folder
-ncr -p 8080 -z ./tf-pqcrypto-scripts/contracts &
