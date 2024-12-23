@@ -73,6 +73,7 @@ The command writes the files:  _~/.aws/credentials_  and  _~/.aws/config_
     
    ```sh
    cd openTofuCode/
+   tofu init
    tofu apply -var="create_key_pair=false" 
    ```
    Notice: when using this line, a pubkey to login via SSH must be configured using the AWS dashboard. 
