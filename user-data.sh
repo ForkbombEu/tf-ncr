@@ -32,11 +32,12 @@ Description=Run NCR program at startup
 After=network.target
 
 [Service]
-ExecStart=$BIN_DIR/ncr -p 8080 -z $REPO_DIR/tf-pqcrypto-scripts/contracts
+ExecStart=$BIN_DIR/ncr -p 8080 --openapi-info $REPO_DIR/tf-pqcrypto-scripts/openapi_info.json -z $REPO_DIR/tf-pqcrypto-scripts/contracts
 Restart=always
 User=nobody
 WorkingDirectory=$REPO_DIR
 Environment=PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+Environment=FILES_DIR=/opt/ncr/repos/tf-pqcrypto-scripts/contracts
 
 [Install]
 WantedBy=multi-user.target" > $SERVICE_FILE
