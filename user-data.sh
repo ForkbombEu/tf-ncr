@@ -2,9 +2,11 @@
 
 # Update the package repository
 apt-get update -y
-# Install upgrades and required packages
-apt-get upgrade -y
+# Install required packages
 apt-get install -y wget git
+# Set up automatic security upgrades
+apt-get install unattended-upgrades
+dpkg-reconfigure unattended-upgrades
 
 # Create directories for persistent configuration and binaries
 INSTALL_DIR="/opt/ncr"
