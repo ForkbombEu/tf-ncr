@@ -6,13 +6,13 @@ ContractsURL ?= https://github.com/ForkbombEu/tf-pqcrypto-scripts
 #all: start
 
 help:
-	@echo "Some examples for usage: \
-	make SSH=y NewPKey=y \
-	make SSH=n NewPKey=n \
-	make SSH=y NewPKey=n ContractsURL=someGithubUrlWithAZenroomContratsFolder \
-	make SSH=n NewPKey=n ContractsURL=https://github.com/ForkbombEu/tf-pqcrypto-scripts"
+	@echo "Some examples for usage: \n\
+	make start SSH=y NewPKey=y \n\
+	make start SSH=n NewPKey=n \n\
+	make start SSH=y NewPKey=n ContractsURL=someGithubUrlWithAZenroomContratsFolder \n\
+	make start SSH=n NewPKey=n ContractsURL=https://github.com/ForkbombEu/tf-pqcrypto-scripts"
 
-start:
+deploy:
 # Check parameters
 ifndef SSH
 	$(error SSH is required. Usage: make start SSH=y/n NewPKey=y/n ContractsURL=githubUrl)

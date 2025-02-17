@@ -53,52 +53,52 @@ The command writes the files:  _~/.aws/credentials_  and  _~/.aws/config_
    - The port 52760 is used in [pipe-tf-ncr](https://github.com/ForkbombEu/pipe-tf-ncr/) (ancillary to [DIDroom_microservices](https://github.com/ForkbombEu/DIDroom_microservices) and can otherwise be closed in *main.tf*
 
 
-
-1. **Create ssh key to connect to the ec2 instance**
+1. **Deploy onto AWS EC2 without SSH access (EC2 -> AMI)**
+   Use this commands if you want to create an AMI, to be used by 3rd parties, from the EC2: the EC2 instance must be created without embedding a pubkey for SSH access. The SSH network won't be affected.
+   
    ```sh
-   ssh-keygen -t ed25519 -C "myEDDSAkeyForAWS" -f ./myED25519Key
-   chmod 700 ./myED25519Key
-   ```
-
-1. **Deploy onto AWS EC2**
-   ```sh
-   cd openTofuCode/
-   tofu init
-   tofu apply # use 'tofu apply -var="create_key_pair=false"' to not add ssh key
+   make deploy SSH=n NewPKey=n # ContractsURL=https://github../tf-pqcrypto-scripts
    ```
    
 
-1. **Deploy onto AWS EC2 excluding SSH pubkey (EC2 -> AMI)**
-   Use this commands if you want to create an AMI, to be used by 3rd parties, from the EC2: the EC2 instance must be created without embedding a pubkey for SSH access. The SSH network won't be affected.
-    
+1. **Deploy onto AWS EC2 with SSH access**
+   
    ```sh
-   cd openTofuCode/
-   tofu init
-   tofu apply -var="create_key_pair=false" 
+   make deploy SSH=y NewPKey=y
    ```
-   Notice: when using this line, a pubkey to login via SSH must be configured using the AWS dashboard. 
+
+   If you already have a public key or you created one (via `ssh-keygen -t ed25519 -C "myEDDSAkeyForAWS" -f ./myED25519Key && chmod 700 ./myED25519Key`) then you can place it in the makefile folder and use
+   
+   ```sh
+   make deploy SSH=y NewPKey=n
+   ```
+
+   The default deployed services are https://github.com/ForkbombEu/tf-pqcrypto-scripts if you want to change it use the parameter `ContractsURL` and specify a different github with contracts:
+
+   ```sh
+   make deploy SSH=y NewPKey=n ContractsURL=someGithubUrlWithAZenroomContratsFolder 
+   ```
+
    
 ## Functionalities
-Ater some minutes, once infrustructure is fully deployed, the previous script **should return the IP and URL** of the AWS ec2 instance you just created, then you can:
+After some minutes, once infrastructure is fully deployed, the previous script **should return the IP and DNS** of the AWS ec2 instance you just created, then you can:
 
 1. **Connect via ssh as admin**
    
    Navigate to the folder tf-ncr/ and use ssh (note: *assignedIP* can be the IP or the URL of the AWS ec2 instance produced by OpenTofu)
     ```sh
-    cd ..
-    ssh -i ./myED25519Key admin@assignedIP
+    ssh -i ./myED25519Key admin@assignedIP # or admin@assignedDNS
     ```
 
 1. **Visualize the ncr service documentation web page via http**
 
    Write in your browser the url http://assignedIP:8080/docs or http://domainName:8080/docs
 
-Note: you can find the assignedIP or the domainName to witch the IP is associated in your AWS ec2 instances page or in output variables after "terraform apply" comand
+Note: you can find the assignedIP or the domainName to witch the IP is associated in your AWS ec2 instances page or in output variables after "terraform apply" command
 
 ## How to stop deployment
    ```sh
-   cd openTofuCode/
-   tofu destroy
+   make destroy
    ```
 
-Notice: Errors may occure if configuration is changed and applyed whitout before destroying. If problems occure try destroy before init and apply.
+Notice: Errors may occur if configuration is changed and applied without before destroying. If problems occur try destroy before deploying again.
