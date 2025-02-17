@@ -24,8 +24,8 @@ chown nobody:nogroup $BIN_DIR/ncr
 # Clone NCR repo and pqcrypto scripts into the repository directory
 git clone https://github.com/forkbombeu/ncr $REPO_DIR/ncr
 chown -R nobody:nogroup $REPO_DIR/ncr
-git clone https://github.com/ForkbombEu/tf-pqcrypto-scripts $REPO_DIR/tf-pqcrypto-scripts
-chown -R nobody:nogroup $REPO_DIR/tf-pqcrypto-scripts
+git clone https://github.com/ForkbombEu/tf-pqcrypto-scripts $REPO_DIR/scripts
+chown -R nobody:nogroup $REPO_DIR/scripts
 
 # Create a systemd service file for NCR
 SERVICE_FILE="/etc/systemd/system/ncr.service"
@@ -34,12 +34,12 @@ Description=Run NCR program at startup
 After=network.target
 
 [Service]
-ExecStart=$BIN_DIR/ncr -p 8080 --openapi-info $REPO_DIR/tf-pqcrypto-scripts/openapi_info.json -z $REPO_DIR/tf-pqcrypto-scripts/contracts
+ExecStart=$BIN_DIR/ncr -p 8080 --openapi-info $REPO_DIR/scripts/openapi_info.json -z $REPO_DIR/scripts/contracts
 Restart=always
 User=nobody
 WorkingDirectory=$REPO_DIR
 Environment=PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
-Environment=FILES_DIR=/opt/ncr/repos/tf-pqcrypto-scripts/contracts
+Environment=FILES_DIR=/opt/ncr/repos/scripts/contracts
 
 [Install]
 WantedBy=multi-user.target" > $SERVICE_FILE
