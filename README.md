@@ -102,3 +102,60 @@ Note: you can find the assignedIP or the domainName to witch the IP is associate
    ```
 
 Notice: Errors may occur if configuration is changed and applied without before destroying. If problems occur try destroy before deploying again.
+
+## Getting Started (Google Cloud Platform)
+
+1. **Clone this repository**
+
+   ```sh
+   git clone https://github.com/ForkbombEu/tf-ncr.git
+   cd tf-ncr
+   ```
+
+2. **Checkout into gcp branch**
+
+   ```sh
+   git checkout gcp
+   ```
+
+3. **Move into openTofuCodeGCP directory**
+
+   ```sh
+   cd openTofuCodeGCP
+   ```
+
+4. **Obtain GCP credentials and store them into a .json file**
+
+5. **Obtain Gandi token and store it into terraform.tfvars**
+
+   ```sh
+   gandi_token = "your_gandi_token"
+   ```
+
+6. **Make changes accordingly to variables.tf file**
+
+   ```sh
+   variable "credentials_file" {
+      default = "/absolute/path/to/your/credentials/file.json"
+   }
+
+   variable "ssh_user" {
+      description = "Username for SSH access"
+      type        = string
+      default     = "your-local-username"
+   }
+
+   variable "ssh_pub_key_path" {
+      description = "Path to your local public SSH key"
+      type        = string
+      default     = "~/.ssh/id_rsa.pub" # default path
+   }
+   ```
+
+7. **Run tofu**
+
+   ```sh
+   tofu init
+   tofu plan
+   tofu apply
+   ```
