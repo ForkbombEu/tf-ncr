@@ -1,7 +1,7 @@
 variable "project_id" {
   description = "GCP project id"
   type = string
-  default = "causal-axle-464911-u4"
+  default = "your-project-id"
 }
 
 variable "region" {
@@ -17,7 +17,7 @@ variable "instance_type" {
 }
 
 variable "credentials_file" {
-  default = "/home/antoniotrkdz/dyne/tf-ncr/credentials.json"
+  default = "/absolute/path/to/file.json"
 }
 
 variable "gandi_token" {
@@ -27,13 +27,13 @@ variable "gandi_token" {
 variable "ssh_user" {
   description = "Username for SSH access"
   type        = string
-  default     = "antoniotrkdz"
+  default     = "your_username"
 }
 
 variable "ssh_pub_key_path" {
   description = "Path to your local public SSH key"
   type        = string
-  default     = "~/.ssh/id_ed25519.pub"
+  default     = "~/.ssh/id_rsa.pub"
 }
 
 variable "name" {}
