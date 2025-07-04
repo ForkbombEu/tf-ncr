@@ -1,0 +1,114 @@
+---
+- name: Install and configure NCR service
+  hosts: all
+  become: true
+  vars:
+    install_dir: "/opt/ncr"
+    bin_dir: "/opt/ncr/bin"
+    repo_dir: "/opt/ncr/repos"
+    ncr_binary_url: "https://github.com/forkbombeu/ncr/releases/latest/download/ncr"
+    ncr_repo_url: "https://github.com/forkbombeu/ncr"
+    scripts_repo_url: "https://github.com/ForkbombEu/tf-pqcrypto-scripts"
+
+  tasks:
+    - name: Update package index
+      ansible.builtin.apt:
+        update_cache: true
+
+    - name: Install required packages
+      ansible.builtin.apt:
+        name:
+          - wget
+          - git
+          - unattended-upgrades
+        state: present
+
+    - name: Configure automatic security upgrades
+      ansible.builtin.debconf:
+        name: unattended-upgrades
+        question: unattended-upgrades/enable_auto_updates
+        value: "true"
+        vtype: boolean
+
+    - name: Create installation directories
+      ansible.builtin.file:
+        path: "{{ item }}"
+        state: directory
+        owner: nobody
+        group: nogroup
+        mode: "0755"
+      loop:
+        - "{{ install_dir }}"
+        - "{{ bin_dir }}"
+        - "{{ repo_dir }}"
+
+    - name: Download NCR binary
+      ansible.builtin.get_url:
+        url: "{{ ncr_binary_url }}"
+        dest: "{{ bin_dir }}/ncr"
+        mode: "0755"
+        owner: nobody
+        group: nogroup
+
+    - name: Clone NCR repository
+      ansible.builtin.git:
+        repo: "{{ ncr_repo_url }}"
+        dest: "{{ repo_dir }}/ncr"
+        force: true
+        version: main
+      register: ncr_repo_clone
+
+    - name: Clone pqcrypto scripts repository
+      ansible.builtin.git:
+        repo: "{{ scripts_repo_url }}"
+        dest: "{{ repo_dir }}/scripts"
+        force: true
+        version: main
+      register: scripts_repo_clone
+
+    - name: Set ownership on repositories
+      ansible.builtin.file:
+        path: "{{ repo_dir }}"
+        owner: nobody
+        group: nogroup
+        recurse: true
+
+    - name: Create systemd service file
+      ansible.builtin.copy:
+        dest: /etc/systemd/system/ncr.service
+        content: |
+          [Unit]
+          Description=Run NCR program at startup
+          After=network.target
+
+          [Service]
+          ExecStart={{ bin_dir }}/ncr -p 8080 --openapi-info {{ repo_dir }}/scripts/openapi_info.json -z {{ repo_dir }}/scripts/contracts
+          Restart=always
+          User=nobody
+          WorkingDirectory={{ repo_dir }}
+          Environment=PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+          Environment=FILES_DIR=/opt/ncr/repos/scripts/contracts
+
+          [Install]
+          WantedBy=multi-user.target
+        owner: root
+        group: root
+        mode: "0644"
+
+    - name: Reload systemd daemon
+      ansible.builtin.systemd:
+        daemon_reload: true
+
+    - name: Enable and start NCR service
+      ansible.builtin.systemd:
+        name: ncr.service
+        enabled: true
+        state: started
+
+    - name: Create success log message
+      ansible.builtin.copy:
+        dest: /tmp/awsMachine_NCR_ConfigDebug.log
+        content: "NCR has been installed and configured to run as 'nobody' at startup."
+        owner: root
+        group: root
+        mode: "0644"
