@@ -5,4 +5,5 @@ openTofuCode*/terraform.tfstate
 openTofuCode*/terraform.tfstate.backup
 openTofuCode*/.terraform.lock.hcl
 openTofuCodeGCP/terraform.tfvars
+openTofuCodeGCP/inventory
 credentials.json
