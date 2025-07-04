@@ -17,7 +17,7 @@ variable "instance_type" {
 }
 
 variable "credentials_file" {
-  default = "/absolute/path/to/file.json"
+  default = "/absolute/path/to/credentials.json"
 }
 
 variable "gandi_token" {
