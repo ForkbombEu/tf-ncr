@@ -49,12 +49,6 @@ The .json containing the credentials should look like:
       default = "/absolute/path/to/your/credentials/file.json"
    }
 
-   variable "ssh_user" {
-      description = "Username for SSH access"
-      type        = string
-      default     = "your-local-username"
-   }
-
    variable "ssh_pub_key_path" {
       description = "Path to your local public SSH key"
       type        = string
