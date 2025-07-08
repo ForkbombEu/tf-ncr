@@ -1,8 +1,84 @@
-# Open Tofu AWS and Google Cloude ncr Example
+# Open Tofu Google Cloude and AWS microservices, based on [NCR](https://github.com/forkbombeu/ncr)
 
-This repository provides a real-world example of using Open Tofu to deploy a basic infrastructure setup to run [No-Code Room](https://github.com/forkbombeu/ncr)  on AWS (EC2 instance and bucket) and Google Cloud. 
+This repository provides a real-world example of using Open Tofu to deploy a basic infrastructure setup to run [No-Code Room](https://github.com/forkbombeu/ncr)  on Google Cloud and AWS. 
+
+--------------------
+
+# Google Cloud Platform
+
+## Getting Started
+
+1. **Clone this repository**
+
+   ```sh
+   git clone https://github.com/ForkbombEu/tf-ncr.git
+   cd tf-ncr
+   ```
+
+1. **Move into openTofuCodeGCP directory**
+
+   ```sh
+   cd openTofuCodeGCP
+   ```
+
+1. **Obtain GCP credentials and store them into a .json file**
+
+The .json containing the credentials should look like: 
+
+```json
+{
+  "type": "service_account",
+  "project_id": "some-stuff-123456-u4",
+  "private_key_id": "abc123",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nabc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123==\n-----END PRIVATE KEY-----\n",
+  "client_email": "some@somemore.gserviceaccount.com",
+  "client_id": "12345678",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/some@somemore.gserviceaccount.com",
+  "universe_domain": "googleapis.com"
+}
+
+```  
+
+1. **Make changes accordingly to variables.tf file**
+
+   ```sh
+   variable "credentials_file" {
+      default = "/absolute/path/to/your/credentials/file.json"
+   }
+
+   variable "ssh_user" {
+      description = "Username for SSH access"
+      type        = string
+      default     = "your-local-username"
+   }
+
+   variable "ssh_pub_key_path" {
+      description = "Path to your local public SSH key"
+      type        = string
+      default     = "~/.ssh/id_rsa.pub" # default path
+   }
+   ```
+
+1. **Run tofu**
+
+   ```sh
+   tofu init
+   tofu plan
+   tofu apply
+   ```
+
+1. **How to stop deployment**
+
+   ```sh
+   make destroy
+   ```
 
 
+-----------------------------------
+-----------------------------------
 
 # AWS setup
 
@@ -106,75 +182,3 @@ Note: you can find the assignedIP or the domainName to witch the IP is associate
 
 Notice: Errors may occur if configuration is changed and applied without before destroying. If problems occur try destroy before deploying again.
 
-
-# Google Cloud Platform
-
-## Getting Started
-
-1. **Clone this repository**
-
-   ```sh
-   git clone https://github.com/ForkbombEu/tf-ncr.git
-   cd tf-ncr
-   ```
-
-1. **Move into openTofuCodeGCP directory**
-
-   ```sh
-   cd openTofuCodeGCP
-   ```
-
-1. **Obtain GCP credentials and store them into a .json file**
-
-The .json containing the credentials should look like: 
-
-```json
-{
-  "type": "service_account",
-  "project_id": "some-stuff-123456-u4",
-  "private_key_id": "abc123",
-  "private_key": "-----BEGIN PRIVATE KEY-----\nabc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123==\n-----END PRIVATE KEY-----\n",
-  "client_email": "some@somemore.gserviceaccount.com",
-  "client_id": "12345678",
-  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
-  "token_uri": "https://oauth2.googleapis.com/token",
-  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
-  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/some@somemore.gserviceaccount.com",
-  "universe_domain": "googleapis.com"
-}
-
-```  
-
-1. **Obtain Gandi token and store it into terraform.tfvars**
-
-   ```sh
-   gandi_token = "your_gandi_token"
-   ```
-
-1. **Make changes accordingly to variables.tf file**
-
-   ```sh
-   variable "credentials_file" {
-      default = "/absolute/path/to/your/credentials/file.json"
-   }
-
-   variable "ssh_user" {
-      description = "Username for SSH access"
-      type        = string
-      default     = "your-local-username"
-   }
-
-   variable "ssh_pub_key_path" {
-      description = "Path to your local public SSH key"
-      type        = string
-      default     = "~/.ssh/id_rsa.pub" # default path
-   }
-   ```
-
-1. **Run tofu**
-
-   ```sh
-   tofu init
-   tofu plan
-   tofu apply
-   ```
