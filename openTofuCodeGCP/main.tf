@@ -41,6 +41,20 @@ resource "google_compute_instance" "ncr_instance" {
   }
 }
 
+# Create firewall rules (equivalent to security groups)
+resource "google_compute_firewall" "ncr_firewall" {
+  name    = "ncr-firewall"
+  network = "default"
+
+  allow {
+    protocol = "tcp"
+    ports    = ["8080", "22"]
+  }
+
+  source_ranges = ["0.0.0.0/0"]
+}
+# Egress is allowed by default in GCP
+
 output "instance_public_ip" {
   description = "Public IP of Google cloud instance"
   value = google_compute_address.static_ip.address
@@ -55,39 +69,22 @@ resource "null_resource" "wait_for_ping" {
 }
 
 locals {
-  depends_on       = null_resource.wait_for_ping
-  host             = "${google_compute_address.static_ip.address}"
-  known_hosts_file = "~/.ssh/known_hosts"
-}
-
-# Create firewall rules (equivalent to security groups)
-resource "google_compute_firewall" "ncr_firewall" {
-  name    = "ncr-firewall"
-  network = "default"
-
-  allow {
-    protocol = "tcp"
-    ports    = ["8080", "22"]
-  }
-
-  source_ranges = ["0.0.0.0/0"]
-}
-
-# Egress is allowed by default in GCP
-
-# Generate the inventory/hosts.yml file
-data "template_file" "ansible_inventory" {
-  template = <<EOT
-all:
-  hosts:
-    ${local.host}:
-EOT
+  depends_on        = null_resource.wait_for_ping
+  host              = "${google_compute_address.static_ip.address}"
+  known_hosts_file  = "~/.ssh/known_hosts"
+  # Generate the inventory/hosts.yml file content
+  ansible_inventory = <<-EOT
+    all:
+      hosts:
+        ${google_compute_address.static_ip.address}:
+          ansible_user: ${var.ssh_user}
+  EOT
 }
 
 # Write the inventory file to the filesystem
 resource "local_file" "ansible_inventory" {
   filename = "${path.module}/inventory/hosts.yml"
-  content  = data.template_file.ansible_inventory.rendered
+  content  = local.ansible_inventory 
 }
 
 resource "null_resource" "add_ssh_key_to_known_hosts" {
@@ -114,7 +111,6 @@ resource "null_resource" "run_ansible" {
   provisioner "local-exec" {
     command = <<EOT
 ansible-playbook -i ${local_file.ansible_inventory.filename} \
--e domain_name=${local.host} \
 ../install_ncr.yaml
 EOT
   }
