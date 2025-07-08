@@ -20,10 +20,6 @@ variable "credentials_file" {
   default = "/absolute/path/to/credentials.json"
 }
 
-variable "gandi_token" {
-  sensitive = true
-}
-
 variable "ssh_user" {
   description = "Username for SSH access"
   type        = string
@@ -35,7 +31,3 @@ variable "ssh_pub_key_path" {
   type        = string
   default     = "~/.ssh/id_rsa.pub"
 }
-
-variable "name" {}
-
-variable "domain" {}
