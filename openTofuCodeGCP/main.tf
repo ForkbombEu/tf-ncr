@@ -3,10 +3,6 @@ terraform {
     google = {
       version = "~> 6.0.0"
     }
-    gandi = {
-      source  = "go-gandi/gandi"
-      version = "~> 2.0"
-    }
   }
 }
 
@@ -15,10 +11,6 @@ provider "google" {
   region      = var.region
   zone        = "${var.region}-b"
   credentials = file(var.credentials_file)
-}
-
-provider "gandi" {
-  personal_access_token = var.gandi_token
 }
 
 resource "google_compute_address" "static_ip" {
@@ -54,32 +46,18 @@ output "instance_public_ip" {
   value = google_compute_address.static_ip.address
 }
 
-resource "gandi_livedns_record" "ncr-gcp" {
-  zone       = var.domain
-  name       = var.name
-  type       = "A"
-  ttl        = 300
-  values     = [google_compute_address.static_ip.address]
-  depends_on = [google_compute_instance.ncr_instance]
-}
-
 resource "null_resource" "wait_for_ping" {
   depends_on = [google_compute_instance.ncr_instance]
 
   provisioner "local-exec" {
-    command = "../ping_new.sh ${local.hostname}"
+    command = "../ping_new.sh ${google_compute_address.static_ip.address}"
   }
 }
 
 locals {
   depends_on       = null_resource.wait_for_ping
-  hostname         = "${gandi_livedns_record.ncr-gcp.name}.${gandi_livedns_record.ncr-gcp.zone}"
+  host             = "${google_compute_address.static_ip.address}"
   known_hosts_file = "~/.ssh/known_hosts"
-}
-
-output "instance_name" {
-  description = "DNS name of Google cloud ncr instance"
-  value       = local.hostname
 }
 
 # Create firewall rules (equivalent to security groups)
@@ -102,7 +80,7 @@ data "template_file" "ansible_inventory" {
   template = <<EOT
 all:
   hosts:
-    ${local.hostname}:
+    ${local.host}:
 EOT
 }
 
@@ -115,17 +93,17 @@ resource "local_file" "ansible_inventory" {
 resource "null_resource" "add_ssh_key_to_known_hosts" {
   depends_on = [null_resource.wait_for_ping]
   triggers = {
-    hostname         = local.hostname
+    host             = local.host
     known_hosts_file = local.known_hosts_file
   }
 
   provisioner "local-exec" {
-    command = "ssh-keyscan -H ${self.triggers.hostname} >> ${local.known_hosts_file}"
+    command = "ssh-keyscan -H ${self.triggers.host} >> ${local.known_hosts_file}"
   }
 
   provisioner "local-exec" {
     when    = destroy
-    command = "ssh-keygen -f ${self.triggers.known_hosts_file} -R ${self.triggers.hostname}"
+    command = "ssh-keygen -f ${self.triggers.known_hosts_file} -R ${self.triggers.host}"
   }
 }
 
@@ -136,7 +114,7 @@ resource "null_resource" "run_ansible" {
   provisioner "local-exec" {
     command = <<EOT
 ansible-playbook -i ${local_file.ansible_inventory.filename} \
--e domain_name=${local.hostname} \
+-e domain_name=${local.host} \
 ../install_ncr.yaml
 EOT
   }
