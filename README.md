@@ -1,12 +1,18 @@
-# Open Tofu Google Cloude and AWS microservices, based on [NCR](https://github.com/forkbombeu/ncr)
+# Open Tofu: Google Cloud Platform and AWS microservices, based on [NCR](https://github.com/forkbombeu/ncr)
 
-This repository provides a real-world example of using Open Tofu to deploy a basic infrastructure setup to run [No-Code Room](https://github.com/forkbombeu/ncr)  on Google Cloud and AWS. 
+This repository provides a real-world example of using Open Tofu to deploy a basic infrastructure setup to run [No-Code Room](https://github.com/forkbombeu/ncr)  on Google Cloud Platfo and AWS. 
+
+The current setup provisions a microservice  offering PQC APIs based on [tf-pqcrypto-scripts](https://github.com/ForkbombEu/tf-pqcrypto-scripts), this is configured in ./install_ncr.yaml (for GCP) and ./user-data.sh (AWS): any repo containing a folder named ./contracts and containing Zencode scripts, should work.
 
 --------------------
 
 # Google Cloud Platform
 
-## Getting Started
+## Prerequisites
+Make sure you have:
+- [Open Tofu](https://opentofu.org/docs)
+- [Ansible](https://docs.ansible.com/ansible/latest/index.html)
+- And a credential.json from GCP in the right folder (see below)
 
 1. **Clone this repository**
 
@@ -89,8 +95,6 @@ To stop the deployment (and kill the VM in GCP) do:
 - AWS CLI configured with your credentials (see section below)
 - A VPC ID where the security group will be created
 - An AMI ID for the EC2 instance
-- ncr service binary uploaded to an S3 bucket
-- ZenCode smart contracts to be stored in an S3 bucket (ask andrea)
 
 ### User and group setup
 From Console Home: 
