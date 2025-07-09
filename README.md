@@ -21,9 +21,9 @@ This repository provides a real-world example of using Open Tofu to deploy a bas
    cd openTofuCodeGCP
    ```
 
-3. **Obtain GCP credentials and store them into a .json file**
+3. **Obtain a credential.json from GCP and store it**
 
-Obtain a credential.json from GCP (from API & Services > Credentials). The .json containing the credentials should look like: 
+Obtain a credential.json from GCP (from API & Services > Credentials) and **store it in ./credential.json** (in the *openTofuCodeGCP* subfolder)The credential.json should look like: 
 
 ```json
 {
