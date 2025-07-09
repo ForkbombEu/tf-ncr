@@ -15,13 +15,13 @@ This repository provides a real-world example of using Open Tofu to deploy a bas
    cd tf-ncr
    ```
 
-1. **Move into openTofuCodeGCP directory**
+2. **Move into openTofuCodeGCP directory**
 
    ```sh
    cd openTofuCodeGCP
    ```
 
-1. **Obtain GCP credentials and store them into a .json file**
+3. **Obtain GCP credentials and store them into a .json file**
 
 Obtain a credential.json from GCP (from API & Services > Credentials). The .json containing the credentials should look like: 
 
@@ -42,32 +42,34 @@ Obtain a credential.json from GCP (from API & Services > Credentials). The .json
 
 ```  
 
-1. **Make changes in variables.tf **
+4. **Edit variables.tf**
 
-Open variables.tf and edit the keys. Follow the comments, edit the keys marked as **IMPORTANT**, particularly
- - "project_id" 
- - "ssh_username"
- - "ssh_public_key_path"
- - "ssh_private_key_path"
+Open variables.tf and edit the keys. Follow the comments, edit the keys marked as **IMPORTANT**, particularly:
+  * "project_id" 
+  * "ssh_username"
+  * "ssh_public_key_path"
+  * "ssh_private_key_path"
 
-1. **Deploy the VM on GCP**
 
-Run:
+
+5. **Deploy the VM on GCP**
+
+To deploy the VM, provision and run the NCR microservice:
 
    ```sh
    tofu init
    tofu apply
    ```
-1. **Use the microservice**
+6. **Use the microservice**
 
 If everything works well, Ansible will output something like:
 
-** ncr_address = "http://34.78.73.125:8080/docs"** 
+**ncr_address = "http://34.78.73.125:8080/docs"** 
 
-Copy the URL in the browser to open the Swagger of the microservice
+Copy the URL in the browser, to open the Swagger of the NCR microservice.
 
 
-1. **Stop the VM**
+7. **Stop the VM**
 
 To stop the deployment (and kill the VM in GCP) do:
 
