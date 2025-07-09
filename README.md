@@ -23,7 +23,7 @@ This repository provides a real-world example of using Open Tofu to deploy a bas
 
 1. **Obtain GCP credentials and store them into a .json file**
 
-The .json containing the credentials should look like: 
+Obtain a credential.json from GCP (from API & Services > Credentials). The .json containing the credentials should look like: 
 
 ```json
 {
@@ -42,32 +42,37 @@ The .json containing the credentials should look like:
 
 ```  
 
-1. **Make changes accordingly to variables.tf file**
+1. **Make changes in variables.tf **
 
-   ```sh
-   variable "credentials_file" {
-      default = "/absolute/path/to/your/credentials/file.json"
-   }
+Open variables.tf and edit the keys. Follow the comments, edit the keys marked as **IMPORTANT**, particularly
+ - "project_id" 
+ - "ssh_username"
+ - "ssh_public_key_path"
+ - "ssh_private_key_path"
 
-   variable "ssh_pub_key_path" {
-      description = "Path to your local public SSH key"
-      type        = string
-      default     = "~/.ssh/id_rsa.pub" # default path
-   }
-   ```
+1. **Deploy the VM on GCP**
 
-1. **Run tofu**
+Run:
 
    ```sh
    tofu init
-   tofu plan
    tofu apply
    ```
+1. **Use the microservice**
 
-1. **How to stop deployment**
+If everything works well, Ansible will output something like:
+
+** ncr_address = "http://34.78.73.125:8080/docs"** 
+
+Copy the URL in the browser to open the Swagger of the microservice
+
+
+1. **Stop the VM**
+
+To stop the deployment (and kill the VM in GCP) do:
 
    ```sh
-   make destroy
+   tofu destroy
    ```
 
 
